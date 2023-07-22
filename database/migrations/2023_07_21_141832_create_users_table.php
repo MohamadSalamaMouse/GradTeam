@@ -26,7 +26,8 @@ class CreateUsersTable extends Migration
             $table->string('facebookUrl')->nullable();
             $table->string('linkedinUrl')->nullable();
             $table->boolean('isLeader')->default(false);
-            $table->boolean('isInTeam')->default(false);
+            $table->unsignedBigInteger('team_id')->nullable();
+            $table->foreign('team_id')->references('id')->on('teams');
             $table->rememberToken();
             $table->timestamps();
         });
