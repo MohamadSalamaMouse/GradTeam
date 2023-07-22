@@ -19,3 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('auth/access-token', [AccessTokensController::class, 'store'])->middleware('guest:sanctum');
+Route::get('ShowAll', [\App\Http\Controllers\Api\ShowController::class, 'ShowAll']);
