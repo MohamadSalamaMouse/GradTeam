@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AccessTokensController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ShowController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('register', [AuthController::class, 'register'])->middleware('guest:sanctum');
+Route::post('login', [AuthController::class, 'login'])->middleware('guest:sanctum');
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('ShowAll', [ShowController::class, 'ShowAll'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('auth/access-token', [AccessTokensController::class, 'store'])->middleware('guest:sanctum');
-Route::get('ShowAll', [\App\Http\Controllers\Api\ShowController::class, 'ShowAll']);
