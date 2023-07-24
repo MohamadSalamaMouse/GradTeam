@@ -29,6 +29,7 @@ class User extends Authenticatable
         'facebookUrl',
         'linkedinUrl',
         'isLeader',
+        'IsJoin',
         'team_id',
     ];
 

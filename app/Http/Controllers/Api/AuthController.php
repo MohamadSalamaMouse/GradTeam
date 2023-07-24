@@ -32,7 +32,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $user->notify(new EmailVerificationNotification());
+
         $token = $user->createToken('auth_token')->plainTextToken;
         return Response::json(
             [
