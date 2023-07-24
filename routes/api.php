@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ShowController;
+use App\Http\Controllers\Api\EmailVerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,8 @@ Route::post('CreateMember', [ShowController::class, 'CreateMember']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('email-verification', [EmailVerificationController::class, 'emailVerification']);
 });
