@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Join;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ShowController extends Controller
 {
-    //
     public function ShowAll()
     {
         $users = User::all();
@@ -178,5 +178,7 @@ class ShowController extends Controller
         }
 
         }
+
+        
 
 }

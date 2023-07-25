@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use App\Notifications\EmailVerificationNotification;
+use App\Traits\ImageProcessing;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    //
+    use ImageProcessing;
+
     public function register(Request $request)
     {
         $request->validate([
@@ -42,9 +45,6 @@ class AuthController extends Controller
 
             ],201);
     }
-
-
-
 
 
 
@@ -85,4 +85,52 @@ class AuthController extends Controller
             'message' => 'Tokens revoked',
         ]);
     }
+
+    public function updateProfile(Request $request)
+    {
+        $authUser = Auth::user();
+        $id = $authUser->id;
+    
+        if ($authUser->id !== $id) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Unauthorized. You can only update your own profile.',
+            ], 401);
+        }
+    
+        $user = User::findOrFail($id);
+    
+        $request->validate([
+            'imageUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
+            'name' => 'nullable|string|max:255',
+            'track' => 'nullable|string|max:255',
+            'bio' => 'nullable|string|max:255',
+            'githubUrl' => 'nullable|string|max:255',
+            'facebookUrl' => 'nullable|string|max:255',
+            'linkedinUrl' => 'nullable|string|max:255',
+        ]);
+    
+        $user->name = $request->name;
+        $user->track = $request->track;
+        $user->bio = $request->bio;
+        $user->githubUrl = $request->githubUrl;
+        $user->facebookUrl = $request->facebookUrl;
+        $user->linkedinUrl = $request->linkedinUrl;
+    
+        if ($request->hasFile('imageUrl')) {
+            $user->imageUrl ? $this->deleteImage($user->imageUrl) : '';
+            $user->imageUrl = $this->saveImage($request->file('imageUrl'));
+        }
+    
+        $user->save();
+    
+        return response()->json([
+            'code' => 1,
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+        ], 200);
+    }
+
+
 }
+
