@@ -110,18 +110,38 @@ class AuthController extends Controller
             'linkedinUrl' => 'nullable|string|max:255',
         ]);
     
-        $user->name = $request->name;
-        $user->track = $request->track;
-        $user->bio = $request->bio;
-        $user->githubUrl = $request->githubUrl;
-        $user->facebookUrl = $request->facebookUrl;
-        $user->linkedinUrl = $request->linkedinUrl;
+        $fieldsToUpdate = [];
+    
+        if ($request->filled('name')) {
+            $fieldsToUpdate['name'] = $request->name;
+        }
+    
+        if ($request->filled('track')) {
+            $fieldsToUpdate['track'] = $request->track;
+        }
+    
+        if ($request->filled('bio')) {
+            $fieldsToUpdate['bio'] = $request->bio;
+        }
+    
+        if ($request->filled('githubUrl')) {
+            $fieldsToUpdate['githubUrl'] = $request->githubUrl;
+        }
+    
+        if ($request->filled('facebookUrl')) {
+            $fieldsToUpdate['facebookUrl'] = $request->facebookUrl;
+        }
+    
+        if ($request->filled('linkedinUrl')) {
+            $fieldsToUpdate['linkedinUrl'] = $request->linkedinUrl;
+        }
     
         if ($request->hasFile('imageUrl')) {
             $user->imageUrl ? $this->deleteImage($user->imageUrl) : '';
-            $user->imageUrl = $this->saveImage($request->file('imageUrl'));
+            $fieldsToUpdate['imageUrl'] = $this->saveImage($request->file('imageUrl'));
         }
     
+        $user->fill($fieldsToUpdate);
         $user->save();
     
         return response()->json([
@@ -130,7 +150,6 @@ class AuthController extends Controller
             'user' => $user,
         ], 200);
     }
-
 
 }
 

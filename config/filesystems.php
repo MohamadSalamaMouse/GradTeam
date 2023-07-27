@@ -37,17 +37,18 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => public_path('app/storage'),
+            'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
         
-        'imagesfp' => [
+        'images' => [
             'driver' => 'local',
-            'root' => storage_path('app/imagesfp'),
-            'url' => env('APP_URL').'/storage/imagesfp',
+            'root' => storage_path('app/images'),
+            'url' => env('APP_URL').'/storage/images',
             'visibility' => 'public',
         ],
+        
         
 
         's3' => [
@@ -76,7 +77,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
-        public_path('imagesfp') => storage_path('app/imagesfp'),
+        public_path('images') => storage_path('app/images'),
 
     ],
 

@@ -21,17 +21,25 @@ trait ImageProcessing{
     
        return $extension ;
     }
+    
+    public function saveImage($image)
+{
+    $img = Image::make($image);
+    $extension = $this->get_mime($img->mime());
 
-    public function saveImage($image){
-        $img = Image::make($image);
-        $extension = $this->get_mime($img->mime());
+    $originalName = $image->getClientOriginalName(); 
+    $str_random = Str::random(8);
+    $imageName = $originalName . '_' . $str_random . '_' . time() . $extension;
+    $img->save(storage_path('app/images') . '/' . $imageName);
 
-        $str_random = Str::random(8);
-        $imgpath = $str_random.time().$extension;
-        $img->save(storage_path('app/imagesfp').'/'.$imgpath);
+    $publicUrl = url('images/' . $imageName);
 
-        return $imgpath;
-    }
+    return $publicUrl;
+}
+
+    
+
+    
 
     public function aspect4resize($image,$width,$height){
         $img = Image::make($image);
@@ -43,7 +51,7 @@ trait ImageProcessing{
         });
   
         $imgpath = $str_random.time().$extension;
-        $img->save(storage_path('app/imagesfp').'/'.$imgpath);
+        $img->save(storage_path('app/images').'/'.$imgpath);
       
         return $imgpath;
   
@@ -65,7 +73,7 @@ trait ImageProcessing{
         }
     
         $imgpath = $str_random.time().$extension;
-        $img->save(storage_path('app/imagesfp').'/'.$imgpath);
+        $img->save(storage_path('app/images').'/'.$imgpath);
         return $imgpath;
     
     
@@ -88,9 +96,9 @@ trait ImageProcessing{
 
         public function deleteImage($filePath){
             if($filePath){
-              if(is_file(Storage::disk('imagesfp')->path($filePath))){
-                  if(file_exists(Storage::disk('imagesfp')->path($filePath))){
-                      unlink(Storage::disk('imagesfp')->path($filePath));  
+              if(is_file(Storage::disk('images')->path($filePath))){
+                  if(file_exists(Storage::disk('images')->path($filePath))){
+                      unlink(Storage::disk('images')->path($filePath));  
                   }
               }
             }

@@ -53,7 +53,7 @@ class User extends Authenticatable
     ];
 
     public function getImageUrlAttribute(){
-        return Storage::disk('imagesfp')->url($this->image);
+        return Storage::disk('images')->url($this->image);
     }
 
 }
