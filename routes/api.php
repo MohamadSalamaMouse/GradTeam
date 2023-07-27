@@ -22,12 +22,13 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanct
 Route::get('ShowAll', [ShowController::class, 'ShowAll'])->middleware('auth:sanctum');
 Route::get('members', [ShowController::class,'viewTeamMembers'])->middleware('auth:sanctum');
 Route::post('StoreTeam', [ShowController::class, 'StoreTeam'])->middleware('auth:sanctum');
-Route::post('deleteTeam/{id}', [ShowController::class, 'deleteTeam'])->middleware('auth:sanctum');
+Route::post('deleteTeam', [ShowController::class, 'deleteTeam'])->middleware('auth:sanctum');
 Route::post('JoinTeam', [ShowController::class, 'JoinTeam'])->middleware('auth:sanctum');
 Route::get('requests', [ShowController::class, 'requests'])->middleware('auth:sanctum');
 Route::get('AcceptJoin', [ShowController::class, 'AcceptJoin'])->middleware('auth:sanctum');
 Route::get('RejectJoin', [ShowController::class, 'RejectJoin'])->middleware('auth:sanctum');
 Route::get('findTeam', [ShowController::class, 'findTeam'])->middleware('auth:sanctum');
+Route::get('DeleteMemeber', [ShowController::class, 'DeleteMemeber'])->middleware('auth:sanctum');
 //Route::post('CreateMember', [ShowController::class, 'CreateMember']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

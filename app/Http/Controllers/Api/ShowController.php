@@ -7,6 +7,7 @@ use App\Models\Join;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShowController extends Controller
 {
@@ -15,9 +16,16 @@ class ShowController extends Controller
     {
         $users = User::all();
         $teams = Team::all();
+        $count=[];
+        foreach ($teams as $team){
+           $count[$team->id] = $team->members->count();
+         }
+
         return response()->json([
             'users' => $users,
-            'teams' => $teams
+            'teams' => $teams,
+            'count'=>$count
+
         ], 200);
     }
 
@@ -30,6 +38,7 @@ class ShowController extends Controller
         return response()->json([
             'code' => 1,
             'team' => $team,
+
 
 
         ], 201);
@@ -65,7 +74,9 @@ class ShowController extends Controller
 
             $user->team_id = $team_id->id;
             $user->isLeader = 1;
+            $team->Num_of_Members=1;
             $user->save();
+            $team->save();
             return response()->json([
                 'code' => 1,
                 'message' => 'Team created successfully',
@@ -81,14 +92,24 @@ class ShowController extends Controller
 
     }
 
-    public function deleteTeam($id)
+    public function deleteTeam(Request $request)
     {
-        $team = Team::find($id);
-        $team->delete();
-        return response()->json([
-            'code' => 1,
-            'message' => 'Team deleted successfully'
-        ], 201);
+          $team_id=$request->team_id;
+        if( $request->user()->isLeader == 1 && $request->user()->team_id == $team_id) {
+            $team = Team::find($team_id);
+            Auth::user()->team_id = null;
+            $team->delete();
+            return response()->json([
+                'code' => 1,
+                'message' => 'Team deleted successfully'
+            ], 201);
+        } else{
+            return response()->json([
+                'code' => 0,
+                'message' => 'You can not delete team'
+            ], 401);
+        }
+
     }
 
     public function JoinTeam(Request $request)
@@ -122,11 +143,17 @@ class ShowController extends Controller
     {
         $team_id = $request->team_id;
         $IsLeader = $request->user()->isLeader;
-        if ($IsLeader == 1) {
+        if ($IsLeader == 1 && $request->user()->team_id == $team_id) {
             $existingJoin = Join::where('team_id', $team_id)->get();
+            $data = [];
+            foreach ($existingJoin as $join) {
+                $data[]=$join->user;
+            }
+
+
             return response()->json([
                 'code' => 1,
-                'members' => $existingJoin,
+                'members' => $data,
             ]);
         } else {
             return response()->json([
@@ -148,8 +175,11 @@ class ShowController extends Controller
         if ($existingJoin ) {
             $existingJoin->delete();
             $user = User::find($user_id);
+            $team = Team::find($team_id);
             $user->team_id = $team_id;
+            $team->Num_of_Members=$team->Num_of_Members+1;
             $user->save();
+            $team->save();
 
             return response()->json([
                 'code' => 0,
@@ -178,5 +208,27 @@ class ShowController extends Controller
         }
 
         }
+    public function DeleteMemeber(Request $request){
+        $user_id=$request->user_id;
+        $team_id=$request->team_id;
+        $user=User::find($user_id);
+        if($request->user()->isLeader==1&& $request->user()->team_id==$team_id && $user->team_id==$team_id){
+            $team=Team::find($team_id);
+            $user->team_id=null;
+            $team->Num_of_Members=$team->Num_of_Members-1;
+            $user->save();
+            $team->save();
+            return response()->json([
+                'code' => 1,
+                'message' => 'Member deleted successfully',
+            ], 201);
+        }else{
+            return response()->json([
+                'code' => 0,
+                'message' => 'You are not a leader',
+            ], 401);
+        }
+
+    }
 
 }

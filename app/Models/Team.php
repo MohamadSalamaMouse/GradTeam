@@ -11,6 +11,7 @@ class Team extends Model
     public $fillable = [
         'name',
         'description',
+        'Num_of_Members',
     ];
    public function members(){
        return $this->hasMany(User::class);
