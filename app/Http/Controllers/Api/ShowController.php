@@ -8,7 +8,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ShowController extends Controller
 {
@@ -231,6 +231,6 @@ class ShowController extends Controller
 
     }
 
-        
+
 
 }
