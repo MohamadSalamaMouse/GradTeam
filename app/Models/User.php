@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Storage;
 
 class User extends Authenticatable
 {
@@ -29,7 +30,6 @@ class User extends Authenticatable
         'facebookUrl',
         'linkedinUrl',
         'isLeader',
-        'IsJoin',
         'team_id',
     ];
 
@@ -51,5 +51,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getImageUrlAttribute(){
+        return Storage::disk('imagesfp')->url($this->image);
+    }
 
 }
