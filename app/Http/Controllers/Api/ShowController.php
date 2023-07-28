@@ -95,9 +95,18 @@ class ShowController extends Controller
     public function deleteTeam(Request $request)
     {
           $team_id=$request->team_id;
+
         if( $request->user()->isLeader == 1 && $request->user()->team_id == $team_id) {
             $team = Team::find($team_id);
-            Auth::user()->team_id = null;
+            $members = $team->members;
+            foreach ($members as $member) {
+                if($member->isLeader == 1){
+                    $member->isLeader = 0;
+                }
+                $member->team_id=null;
+                $member->save();
+            }
+
             $team->delete();
             return response()->json([
                 'code' => 1,
@@ -169,28 +178,36 @@ class ShowController extends Controller
     {
         $user_id = $request->user_id;
         $team_id = $request->team_id;
+      if( $request->user()->isLeader == 1 && $request->user()->team_id == $team_id) {
 
-      $existingJoin= Join::where('user_id',$user_id)->where('team_id',$team_id);
+          $existingJoin= Join::where('user_id',$user_id)->where('team_id',$team_id);
 
-        if ($existingJoin ) {
-            $existingJoin->delete();
-            $user = User::find($user_id);
-            $team = Team::find($team_id);
-            $user->team_id = $team_id;
-            $team->Num_of_Members=$team->Num_of_Members+1;
-            $user->save();
-            $team->save();
+          if ($existingJoin ) {
+              $existingJoin->delete();
+              $user = User::find($user_id);
+              $team = Team::find($team_id);
+              $user->team_id = $team_id;
+              $team->Num_of_Members=$team->Num_of_Members+1;
+              $user->save();
+              $team->save();
 
-            return response()->json([
-                'code' => 0,
-                'message' => 'Your join request has been accepted',
-            ], 200);
-        } else {
-            return response()->json([
-                'code' => 1,
-                'message' => 'You have not requested to join this team',
-            ], 404);
-        }
+              return response()->json([
+                  'code' => 0,
+                  'message' => 'Your join request has been accepted',
+              ], 200);
+          } else {
+              return response()->json([
+                  'code' => 1,
+                  'message' => 'You have not requested to join this team',
+              ], 404);
+          }
+      }else{
+          return response()->json([
+              'code' => 0,
+              'message' => 'You are not a leader',
+          ], 401);
+      }
+
 
 
     }
@@ -198,16 +215,24 @@ class ShowController extends Controller
     Public function RejectJoin(Request $request){
         $user_id = $request->user_id;
         $team_id = $request->team_id;
-        $existingJoin= Join::where('user_id',$user_id)->where('team_id',$team_id);
-        if ($existingJoin ) {
-            $existingJoin->delete();
+        if( $request->user()->isLeader == 1 && $request->user()->team_id == $team_id){
+            $existingJoin= Join::where('user_id',$user_id)->where('team_id',$team_id);
+            if ($existingJoin ) {
+                $existingJoin->delete();
+                return response()->json([
+                    'code' => 0,
+                    'message' => 'Your join request has been rejected',
+                ], 201);
+            }
+
+        }else {
             return response()->json([
                 'code' => 0,
-                'message' => 'Your join request has been rejected',
-            ], 201);
-        }
+                'message' => 'You are not a leader',
+            ], 401);
 
         }
+    }
     public function DeleteMemeber(Request $request){
         $user_id=$request->user_id;
         $team_id=$request->team_id;

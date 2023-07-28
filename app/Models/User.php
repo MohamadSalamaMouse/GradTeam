@@ -52,8 +52,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function getImageUrlAttribute(){
-        return Storage::disk('images')->url($this->image);
-    }
+
 
 }

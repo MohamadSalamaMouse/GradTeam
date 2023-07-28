@@ -8,12 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use App\Notifications\EmailVerificationNotification;
-use App\Traits\ImageProcessing;
 use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
-    use ImageProcessing;
+
 
     public function register(Request $request)
     {
@@ -88,7 +88,7 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
-        try {
+
             $authUser = Auth::user();
             $id = $authUser->id;
 
@@ -102,7 +102,7 @@ class AuthController extends Controller
             $user = User::findOrFail($id);
 
             $request->validate([
-                'imageUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
+                'imageUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
                 'name' => 'nullable|string|max:255',
                 'track' => 'nullable|string|max:255',
                 'bio' => 'nullable|string|max:255',
@@ -138,8 +138,20 @@ class AuthController extends Controller
             }
 
             if ($request->hasFile('imageUrl')) {
-                $user->imageUrl ? $this->deleteImage($user->imageUrl) : '';
-                $fieldsToUpdate['imageUrl'] = $this->saveImage($request->file('imageUrl'));
+
+
+                if(file_exists($user->imageUrl)){
+                    unlink($user->imageUrl);
+                }
+
+                       $file=$request->file('imageUrl');
+                       $ImageName=date('YmdHi').$file->getClientOriginalName();
+                       $file->move(public_path('images'),$ImageName);
+                       $imagePath='images/'.$ImageName;
+                       $fieldsToUpdate['imageUrl']=$imagePath;
+
+
+
             }
 
             $user->fill($fieldsToUpdate);
@@ -150,18 +162,8 @@ class AuthController extends Controller
                 'message' => 'Profile updated successfully',
                 'user' => $user,
             ], 200);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'code' => 0,
-                'message' => 'Validation failed. Please check your input and try again.',
-            ], 401);
-        } catch (\Exception $e) {
-            return response()->json([
-                'code' => 0,
-                'message' => 'An error occurred while updating the profile. Please try again.',
-            ], 401);
         }
-    }
+
 
 }
 
