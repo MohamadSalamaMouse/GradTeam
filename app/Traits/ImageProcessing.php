@@ -23,22 +23,18 @@ trait ImageProcessing{
     }
     
     public function saveImage($image)
-{
-    $img = Image::make($image);
-    $extension = $this->get_mime($img->mime());
-
-    $originalName = $image->getClientOriginalName(); 
-    $str_random = Str::random(8);
-    $imageName = $originalName . '_' . $str_random . '_' . time() . $extension;
-    $img->save(storage_path('app/images') . '/' . $imageName);
-
-    $publicUrl = url('images/' . $imageName);
-
-    return $publicUrl;
-}
-
+    {
+        $img = Image::make($image);
+        $extension = $this->get_mime($img->mime());
     
-
+        $str_random = Str::random(8);
+        $imageName = 'images/' . $str_random . time() . $extension;
+        $img->save(storage_path('app') . '/' . $imageName);
+    
+        return $imageName;
+    }
+    
+    
     
 
     public function aspect4resize($image,$width,$height){

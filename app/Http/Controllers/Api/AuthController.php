@@ -88,67 +88,79 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $authUser = Auth::user();
-        $id = $authUser->id;
-    
-        if ($authUser->id !== $id) {
+        try {
+            $authUser = Auth::user();
+            $id = $authUser->id;
+
+            if ($authUser->id !== $id) {
+                return response()->json([
+                    'code' => 0,
+                    'message' => 'Unauthorized. You can only update your own profile.',
+                ], 401);
+            }
+
+            $user = User::findOrFail($id);
+
+            $request->validate([
+                'imageUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
+                'name' => 'nullable|string|max:255',
+                'track' => 'nullable|string|max:255',
+                'bio' => 'nullable|string|max:255',
+                'githubUrl' => 'nullable|string|max:255',
+                'facebookUrl' => 'nullable|string|max:255',
+                'linkedinUrl' => 'nullable|string|max:255',
+            ]);
+
+            $fieldsToUpdate = [];
+
+            if ($request->filled('name')) {
+                $fieldsToUpdate['name'] = $request->name;
+            }
+
+            if ($request->filled('track')) {
+                $fieldsToUpdate['track'] = $request->track;
+            }
+
+            if ($request->filled('bio')) {
+                $fieldsToUpdate['bio'] = $request->bio;
+            }
+
+            if ($request->filled('githubUrl')) {
+                $fieldsToUpdate['githubUrl'] = $request->githubUrl;
+            }
+
+            if ($request->filled('facebookUrl')) {
+                $fieldsToUpdate['facebookUrl'] = $request->facebookUrl;
+            }
+
+            if ($request->filled('linkedinUrl')) {
+                $fieldsToUpdate['linkedinUrl'] = $request->linkedinUrl;
+            }
+
+            if ($request->hasFile('imageUrl')) {
+                $user->imageUrl ? $this->deleteImage($user->imageUrl) : '';
+                $fieldsToUpdate['imageUrl'] = $this->saveImage($request->file('imageUrl'));
+            }
+
+            $user->fill($fieldsToUpdate);
+            $user->save();
+
+            return response()->json([
+                'code' => 1,
+                'message' => 'Profile updated successfully',
+                'user' => $user,
+            ], 200);
+        } catch (ValidationException $e) {
             return response()->json([
                 'code' => 0,
-                'message' => 'Unauthorized. You can only update your own profile.',
+                'message' => 'Validation failed. Please check your input and try again.',
+            ], 401);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'An error occurred while updating the profile. Please try again.',
             ], 401);
         }
-    
-        $user = User::findOrFail($id);
-    
-        $request->validate([
-            'imageUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
-            'name' => 'nullable|string|max:255',
-            'track' => 'nullable|string|max:255',
-            'bio' => 'nullable|string|max:255',
-            'githubUrl' => 'nullable|string|max:255',
-            'facebookUrl' => 'nullable|string|max:255',
-            'linkedinUrl' => 'nullable|string|max:255',
-        ]);
-    
-        $fieldsToUpdate = [];
-    
-        if ($request->filled('name')) {
-            $fieldsToUpdate['name'] = $request->name;
-        }
-    
-        if ($request->filled('track')) {
-            $fieldsToUpdate['track'] = $request->track;
-        }
-    
-        if ($request->filled('bio')) {
-            $fieldsToUpdate['bio'] = $request->bio;
-        }
-    
-        if ($request->filled('githubUrl')) {
-            $fieldsToUpdate['githubUrl'] = $request->githubUrl;
-        }
-    
-        if ($request->filled('facebookUrl')) {
-            $fieldsToUpdate['facebookUrl'] = $request->facebookUrl;
-        }
-    
-        if ($request->filled('linkedinUrl')) {
-            $fieldsToUpdate['linkedinUrl'] = $request->linkedinUrl;
-        }
-    
-        if ($request->hasFile('imageUrl')) {
-            $user->imageUrl ? $this->deleteImage($user->imageUrl) : '';
-            $fieldsToUpdate['imageUrl'] = $this->saveImage($request->file('imageUrl'));
-        }
-    
-        $user->fill($fieldsToUpdate);
-        $user->save();
-    
-        return response()->json([
-            'code' => 1,
-            'message' => 'Profile updated successfully',
-            'user' => $user,
-        ], 200);
     }
 
 }
