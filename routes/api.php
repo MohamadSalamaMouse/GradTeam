@@ -34,5 +34,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('updateTeam', [ShowController::class, 'updateTeam'])->middleware('auth:sanctum');
 Route::post('leaveTeam', [ShowController::class, 'leaveTeam'])->middleware('auth:sanctum');
 Route::post('update-profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');

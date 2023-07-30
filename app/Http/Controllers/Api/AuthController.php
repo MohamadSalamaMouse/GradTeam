@@ -166,8 +166,7 @@ class AuthController extends Controller
                 'message' => 'Profile updated successfully',
                 'user' => $user,
             ], 200);
-        }
-
+     }
 
 }
 

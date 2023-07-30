@@ -281,5 +281,45 @@ class ShowController extends Controller
         }
     }
     
+
+    public function updateTeam(Request $request)
+    {
+        $authUser = Auth::user();
+        $team_id = $request->team_id;
+    
+        if ($authUser->isLeader == 1 && $authUser->team_id == $team_id) {
+            $team = Team::find($team_id);
+    
+            $request->validate([
+                'name' => 'nullable|string|max:255',
+                'description' => 'nullable|string',
+            ]);
+    
+            $fieldsToUpdate = [];
+    
+            if (!is_null($request->name)) {
+                $fieldsToUpdate['name'] = $request->name;
+            }
+    
+            if (!is_null($request->description)) {
+                $fieldsToUpdate['description'] = $request->description;
+            }
+    
+            $team->update($fieldsToUpdate);
+    
+            return response()->json([
+                'code' => 1,
+                'message' => 'Team updated successfully',
+                'team' => $team,
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 0,
+                'message' => 'You are not the leader of this team, so you cannot edit it',
+            ], 401);
+        }
+    }
+    
+
 }
 
