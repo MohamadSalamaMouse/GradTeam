@@ -13,21 +13,21 @@ use Illuminate\Support\Facades\Hash;
 class ShowController extends Controller
 {
     public function ShowAll()
-    {
-        $users = User::all();
-        $teams = Team::all();
-        $count=[];
-        foreach ($teams as $team){
-           $count[$team->id] = $team->members->count();
-         }
-
-        return response()->json([
-            'users' => $users,
-            'teams' => $teams,
-            'count'=>$count
-
-        ], 200);
+{
+    $users = User::orderByDesc('id')->get();
+    $teams = Team::orderByDesc('id')->get();
+    
+    $count = [];
+    foreach ($teams as $team) {
+        $count[$team->id] = $team->members->count();
     }
+
+    return response()->json([
+        'users' => $users,
+        'teams' => $teams,
+        'count' => $count
+    ], 200);
+}
 
     public function viewTeamMembers()
     {
@@ -256,6 +256,30 @@ class ShowController extends Controller
 
     }
 
-
-
+    public function leaveTeam(Request $request)
+    {
+        $authUser = Auth::user();
+        $team_id = $request->team_id;
+    
+        if ($authUser->team_id == $team_id) {
+            $team = Team::find($team_id);
+            $team->Num_of_Members = $team->Num_of_Members - 1;
+            $team->save();
+    
+            $authUser->team_id = null;
+            $authUser->save();
+    
+            return response()->json([
+                'code' => 1,
+                'message' => 'You have left the team successfully',
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 0,
+                'message' => 'You are not a member of this team, so you cannot leave it',
+            ], 401);
+        }
+    }
+    
 }
+

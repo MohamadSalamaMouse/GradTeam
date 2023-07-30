@@ -40,12 +40,12 @@ class AuthController extends Controller
         return Response::json(
             [
                 'code'=>1,
+                'message' => 'Registration Successful',
                 'access_token'=>$token,
                 'user'=>$user
 
             ],201);
     }
-
 
 
 
@@ -63,9 +63,9 @@ class AuthController extends Controller
             $token= $user->createToken($device_name);
             return Response::json(
                 [    'code'=>1,
-                    'access_token'=>$token->plainTextToken,
-                    'user'=>$user
-
+                     'message' => 'You have logged in',
+                     'access_token'=>$token->plainTextToken,
+                     'user'=>$user
                 ]
                 ,201);
         }
@@ -77,6 +77,10 @@ class AuthController extends Controller
             ],401);
 
     }
+
+
+
+
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
