@@ -18,66 +18,78 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'=>'required|string|max:255',
-            'email'=>'required|email|max:255|unique:users',
-            'password'=>'required|string|min:6',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
         ]);
-        if(User::where('email',$request->email)->exists()){
-            return Response::json(
-                [
-                    'code'=>0,
-                    'message'=>'Email already exists'
-                ],401);
+    
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Email already exists'
+            ], 401);
         }
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-        return Response::json(
-            [
-                'code'=>1,
-                'message' => 'Registration Successful',
-                'access_token'=>$token,
-                'user'=>$user
-
-            ],201);
+    
+        $user->notify(new EmailVerificationNotification());
+    
+        // Refresh the user instance to fetch the latest data from the database
+        $user = $user->refresh();
+    
+        return response()->json([
+            'code' => 1,
+            'message' => 'Registration Successful, now verify your email',
+            'user' => $user
+        ], 201);
     }
-
-
+    
 
 
     public function login(Request $request)
     {
         $request->validate([
-            'email'=>'required|email|max:255',
-            'password'=>'required|string|min:6',
-            'device_name'=>'string|max:255',
+            'email' => 'required|email|max:255',
+            'password' => 'required|string|min:6',
+            'device_name' => 'string|max:255',
         ]);
-        $user = User::where('email',$request->email)->first();
-        if($user && Hash::check($request->password,$user->password)){
-            $device_name=$request->post('device_name',$request->UserAgent());
-            $token= $user->createToken($device_name);
-            return Response::json(
-                [    'code'=>1,
-                     'message' => 'You have logged in',
-                     'access_token'=>$token->plainTextToken,
-                     'user'=>$user
-                ]
-                ,201);
+    
+        $user = User::where('email', $request->email)->first();
+    
+        // Check if the user exists and the provided password is correct
+        if ($user && Hash::check($request->password, $user->password)) {
+    
+            // Check if the email is verified
+            if ($user->hasVerifiedEmail()) {
+                $device_name = $request->post('device_name', $request->userAgent());
+                $token = $user->createToken($device_name);
+    
+                return Response::json([
+                    'code' => 1,
+                    'message' => 'You have logged in',
+                    'access_token' => $token->plainTextToken,
+                    'user' => $user
+                ], 201);
+            } else {
+                // If email is not verified, return an error response
+                return Response::json([
+                    'code' => 0,
+                    'message' => 'Email verification required. Please verify your email before logging in.'
+                ], 401);
+            }
         }
-
-        return Response::json(
-            [
-                'code'=>0,
-                'message'=>'Invalid Credentials'
-            ],401);
-
+    
+        // If user authentication fails, return an error response
+        return Response::json([
+            'code' => 0,
+            'message' => 'Invalid Credentials'
+        ], 401);
     }
-
+    
 
 
 

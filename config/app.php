@@ -176,7 +176,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        // Ichtrojan\Otp\OtpServiceProvider::class,
+        Ichtrojan\Otp\OtpServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class
 
     ],
