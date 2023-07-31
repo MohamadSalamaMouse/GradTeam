@@ -16,7 +16,7 @@ class ShowController extends Controller
 {
     $users = User::orderByDesc('id')->get();
     $teams = Team::orderByDesc('id')->get();
-    
+
     $count = [];
     foreach ($teams as $team) {
         $count[$team->id] = $team->members->count();
@@ -260,15 +260,15 @@ class ShowController extends Controller
     {
         $authUser = Auth::user();
         $team_id = $request->team_id;
-    
+
         if ($authUser->team_id == $team_id) {
             $team = Team::find($team_id);
             $team->Num_of_Members = $team->Num_of_Members - 1;
             $team->save();
-    
+
             $authUser->team_id = null;
             $authUser->save();
-    
+
             return response()->json([
                 'code' => 1,
                 'message' => 'You have left the team successfully',
@@ -280,33 +280,33 @@ class ShowController extends Controller
             ], 401);
         }
     }
-    
+
 
     public function updateTeam(Request $request)
     {
         $authUser = Auth::user();
         $team_id = $request->team_id;
-    
+
         if ($authUser->isLeader == 1 && $authUser->team_id == $team_id) {
             $team = Team::find($team_id);
-    
+
             $request->validate([
                 'name' => 'nullable|string|max:255',
                 'description' => 'nullable|string',
             ]);
-    
+
             $fieldsToUpdate = [];
-    
+
             if (!is_null($request->name)) {
                 $fieldsToUpdate['name'] = $request->name;
             }
-    
+
             if (!is_null($request->description)) {
                 $fieldsToUpdate['description'] = $request->description;
             }
-    
+
             $team->update($fieldsToUpdate);
-    
+
             return response()->json([
                 'code' => 1,
                 'message' => 'Team updated successfully',
@@ -319,7 +319,7 @@ class ShowController extends Controller
             ], 401);
         }
     }
-    
+
 
 }
 
