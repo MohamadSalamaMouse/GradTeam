@@ -2,7 +2,7 @@
 
 
 # Introduction
-
+The TeamUpGrad app is an app to help students find a team for their graduatig project
 
 
 
@@ -12,12 +12,16 @@
 ##   Documentation
 
 
-
-| Program Flow-chart  (use case)                                                                                                               | 
+                                                                                                        | 
 
 
 ### Implemented Features
-- Api
+- Student can ask join to team
+- Team leader can accept or reject member
+- Verification
+- Team leader can delete team /delete member
+- Edit profile 
+- Home to see team members
 
 ---
 
@@ -48,12 +52,12 @@
   3 - run php artisan key:generate
   4 - configure .env
 ```
-## Team 
-### Android Developers
+## Contributors
+
 ### Backend Developers
 - Mohamed Salama: [GitHub Profile](https://github.com/mohamed-salama)
 - Eman Elhelaly: [GitHub Profile](https://github.com/eman-elhelaly)
-
+### Android Developers
 - Mohamed Emad: [GitHub Profile](https://github.com/mohamed-emad)
 - Mai Elkhodery: [GitHub Profile](https://github.com/maielkhodery)
 
