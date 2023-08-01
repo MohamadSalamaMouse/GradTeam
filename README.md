@@ -62,7 +62,7 @@ The TeamUpGrad app is an app to help students find a team for their graduatig pr
 - Mai Elkhodery: [GitHub Profile](https://github.com/maielkhodery)
 
 ### UI/UX Developer
-- Menna Elgayar: [GitHub Profile](https://github.com/menna-elgayar)
+- Menna Elgayar: [GitHub Profile](https://github.com/MennaElgyar)
 
 ---
 ## Android Code
