@@ -22,32 +22,32 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|min:6',
         ]);
-    
+
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'code' => 0,
                 'message' => 'Email already exists'
             ], 401);
         }
-    
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-    
+
         $user->notify(new EmailVerificationNotification());
-    
+
         // Refresh the user instance to fetch the latest data from the database
         $user = $user->refresh();
-    
+
         return response()->json([
             'code' => 1,
             'message' => 'Registration Successful, now verify your email',
             'user' => $user
         ], 201);
     }
-    
+
 
 
     public function login(Request $request)
@@ -57,17 +57,17 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'device_name' => 'string|max:255',
         ]);
-    
+
         $user = User::where('email', $request->email)->first();
-    
+
         // Check if the user exists and the provided password is correct
         if ($user && Hash::check($request->password, $user->password)) {
-    
+
             // Check if the email is verified
             if ($user->hasVerifiedEmail()) {
                 $device_name = $request->post('device_name', $request->userAgent());
                 $token = $user->createToken($device_name);
-    
+
                 return Response::json([
                     'code' => 1,
                     'message' => 'You have logged in',
@@ -82,14 +82,14 @@ class AuthController extends Controller
                 ], 401);
             }
         }
-    
+
         // If user authentication fails, return an error response
         return Response::json([
             'code' => 0,
             'message' => 'Invalid Credentials'
         ], 401);
     }
-    
+
 
 
 
