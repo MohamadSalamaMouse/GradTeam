@@ -55,10 +55,10 @@ The TeamUpGrad app is an app to help students find a team for their graduatig pr
 ## Contributors
 
 ### Backend Developers
-- Mohamed Salama: [GitHub Profile](https://github.com/mohamed-salama)
-- Eman Elhelaly: [GitHub Profile](https://github.com/eman-elhelaly)
+- Mohamed Salama: [GitHub Profile](https://github.com/MohamadSalamaMouse)
+- Eman Elhelaly: [GitHub Profile](https://github.com/EmanElhelaly11)
 ### Android Developers
-- Mohamed Emad: [GitHub Profile](https://github.com/mohamed-emad)
+- Mohamed Emad: [GitHub Profile](https://github.com/Mohamed02Emad)
 - Mai Elkhodery: [GitHub Profile](https://github.com/maielkhodery)
 
 ### UI/UX Developer
