@@ -48,7 +48,17 @@
   3 - run php artisan key:generate
   4 - configure .env
 ```
+## Team 
+### Android Developers
+### Backend Developers
+- Mohamed Salama: [GitHub Profile](https://github.com/mohamed-salama)
+- Eman Elhelaly: [GitHub Profile](https://github.com/eman-elhelaly)
 
+- Mohamed Emad: [GitHub Profile](https://github.com/mohamed-emad)
+- Mai Elkhodery: [GitHub Profile](https://github.com/maielkhodery)
+
+### UI/UX Developer
+- Menna Elgayar: [GitHub Profile](https://github.com/menna-elgayar)
 
 ---
 ## Demo video
