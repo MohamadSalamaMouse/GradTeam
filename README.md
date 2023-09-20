@@ -13,8 +13,6 @@ The TeamUpGrad app is an app to help students find a team for their graduatig pr
 ![▶ Page 1 - CAT](https://github.com/Mohamed02Emad/TeamUpGrad/assets/108477138/7c86770a-9d21-41b1-aad0-acba07e3b9c0)
 
 
-                                                                                                        | 
-
 
 ### Implemented Features
 - Student can ask join to team
